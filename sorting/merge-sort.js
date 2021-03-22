@@ -1,8 +1,9 @@
-function mergeSort(arr) {
-  if (arr.length <= 1) return arr;
-  const middle = Math.floor(arr.length / 2);
-  const lower = mergeSort(arr.slice(0, middle));
-  const upper = mergeSort(arr.slice(middle));
+
+function mergeSort(arr, low = 0, high = arr.length - 1) {
+  if ((high - low + 1) <= 1) return [arr[low]];
+  const middle = Math.floor((high - low + 1) / 2) + low;
+  const lower = mergeSort(arr, low, middle - 1);
+  const upper = mergeSort(arr, middle, high);
   let lowerIdx = 0;
   let upperIdx = 0;
   const newArr = [];
@@ -15,4 +16,8 @@ function mergeSort(arr) {
       if (upperIdx === upper.length) return newArr.concat(lower.slice(lowerIdx));
     }
   }
+}
+
+module.exports = {
+  mergeSort,
 }

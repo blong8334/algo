@@ -1,49 +1,44 @@
-function heapify(arr) {
+const { swap } = require('./utils');
+
+const maxCompare = (el1, el2) => el1 > el2;
+const minCompare = (el1, el2) => el1 < el2;
+
+function heapify(compareFn, arr) {
   for (let i = 1; i < arr.length; i++) {
-    heapifyIts++;
-    checkOrSwap(arr, i, getParentIdx(i));
+    checkOrSwap(arr, i, getParentIdx(i), compareFn);
   }
 }
 
-function sortMaxHeap(heap) {
+function sortHeap(compareFn, heap) {
   let end = heap.length - 1;
   while (end) {
-    sortHeapIts++;
-    const temp = heap[0];
-    heap[0] = heap[end];
-    heap[end] = temp;
-    moveDown(heap, end);
+    swap(heap, 0, end);
+    moveDown(heap, end, compareFn);
     end -= 1;
   }
 }
 
-function moveDown(heap, end) {
+function moveDown(heap, end, compareFn) {
   let idx = 0;
   while (true) {
-    sortHeapIts++;
-    let bigChild;
+    let compareChild;
     const l = getLeftChildIdx(idx);
     const r = getRightChildIdx(idx);
     if (l >= end) return;
-    if (r >= end) bigChild = l;
-    else bigChild = heap[l] > heap[r] ? l : r;
-    if (heap[idx] > heap[bigChild]) {
+    if (r >= end) compareChild = l;
+    else compareChild = compareFn(heap[l], heap[r]) ? l : r;
+    if (compareFn(heap[idx], heap[compareChild])) {
       return;
     }
-    const temp = heap[idx];
-    heap[idx] = heap[bigChild];
-    heap[bigChild] = temp;
-    idx = bigChild;
+    swap(heap, idx, compareChild);
+    idx = compareChild;
   }
 }
 
-function checkOrSwap(arr, i, parentIdx) {
+function checkOrSwap(arr, i, parentIdx, compareFn) {
   while (i) {
-    heapifyIts++;
-    if (arr[i] > arr[parentIdx]) {
-      const temp = arr[parentIdx];
-      arr[parentIdx] = arr[i];
-      arr[i] = temp;
+    if (compareFn(arr[i], arr[parentIdx])) {
+      swap(arr, parentIdx, i);
       i = parentIdx;
       parentIdx = getParentIdx(i);
     } else {
@@ -61,3 +56,10 @@ function getRightChildIdx(idx) {
 function getParentIdx(idx) {
   return Math.floor((idx - 1) / 2);
 }
+
+module.exports = {
+  maxHeapify: heapify.bind(null, maxCompare),
+  minHeapify: heapify.bind(null, minCompare),
+  sortMaxHeap: sortHeap.bind(null, maxCompare),
+  sortMinHeap: sortHeap.bind(null, minCompare),
+};
