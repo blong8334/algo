@@ -14,8 +14,19 @@ function isSorted(cf, arr) {
   return true;
 }
 
+function fillArray(count, lower, upper, isInt) {
+  const arr = [];
+  for (let i = 0; i < count; i++) {
+    let number = Math.random() * (upper - lower + 1) + lower;
+    if (isInt) number = Math.floor(number);
+    arr.push(number);
+  }
+  return arr;
+}
+
 module.exports = {
-  swap,
+  fillArray,
   isSortedAsc: isSorted.bind(null, (a, b) => a < b),
   isSortedDesc: isSorted.bind(null, (a, b) => a > b),
+  swap,
 };
