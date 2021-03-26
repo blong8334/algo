@@ -199,6 +199,22 @@ class RedBlackTree {
     }
     return rank;
   }
+  getElementAt(rank, tree) {
+    if (!tree) {
+      tree = this.root;
+    }
+    if (tree.key === null) {
+      return null;
+    }
+    const k = tree.leftChild.subtreeSize + 1;
+    if (rank === k) {
+      return tree.key;
+    }
+    if (rank < k) {
+      return this.getElementAt(rank, tree.leftChild);
+    }
+    return this.getElementAt(rank - k, tree.rightChild);
+  }
 }
 
 function redBlackTree(arr) {
