@@ -215,6 +215,37 @@ class RedBlackTree {
     }
     return this.getElementAt(rank - k, tree.rightChild);
   }
+  getRangeCount(num1, num2) {
+    let node = this.root;
+    let count = 0;
+    while (true) {
+      if (node.key === null) {
+        break;
+      }
+      if (num1 <= node.key) {
+        count += node.rightChild.subtreeSize + 1;
+        node = node.leftChild;
+      }
+      else {
+        node = node.rightChild;
+      }
+    }
+    node = this.root;
+    while (true) {
+      while (true) {
+        if (node.key === null) {
+          return count;
+        }
+        if (num2 < node.key) {
+          count -= node.rightChild.subtreeSize + 1;
+          node = node.leftChild;
+        }
+        else {
+          node = node.rightChild;
+        }
+      }
+    }
+  }
 }
 
 function redBlackTree(arr) {
