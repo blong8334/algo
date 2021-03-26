@@ -1,25 +1,20 @@
 const RED = 'red';
 const BLACK = 'black';
-
-function isLeftChild(parent, child) {
+const isLeftChild = (parent, child) => {
   return child.key <= parent.key;
-}
-function isNodeRoot(node) {
+};
+const isNodeRoot = (node) => {
   return node.parent === null;
-}
-
-function getAncestor(node, levels) {
+};
+const getAncestor = (node, levels) => {
   let ancestor = node;
-  while (levels--) {
-    ancestor = ancestor.parent;
-  }
+  while (levels--) ancestor = ancestor.parent;
   return ancestor;
-}
-
-function getUncle(grandparent, parent) {
+};
+const getUncle = (grandparent, parent) => {
   if (isLeftChild(grandparent, parent)) return grandparent.rightChild;
   return grandparent.leftChild;
-}
+};
 
 class Node {
   constructor(key, color, fake) {
@@ -54,7 +49,8 @@ class RedBlackTree {
           return this.setNode(currentNode, node, 'rightChild');
         }
         currentNode = currentNode.rightChild;
-      } else {
+      }
+      else {
         if (!currentNode.leftChild.key) {
           return this.setNode(currentNode, node, 'leftChild');
         }
@@ -91,16 +87,20 @@ class RedBlackTree {
     if (uncle.color === RED) {
       return this.case1(grandparent, parent, uncle);
     }
-    if (isLeftChild(grandparent, parent) && !isLeftChild(parent, node)) {
-      return this.case2('leftChild', 'rightChild', grandparent, parent, node);
+    const isParentLeft = isLeftChild(grandparent, parent);
+    const isNodeLeft = isLeftChild(parent, node);
+    const case2 = this.case2.bind(this, grandparent, parent, node);
+    if (isParentLeft && !isNodeLeft) {
+      return case2('leftChild', 'rightChild');
     }
-    if (!isLeftChild(grandparent, parent) && isLeftChild(parent, node)) {
-      return this.case2('rightChild', 'leftChild', grandparent, parent, node);
+    if (!isParentLeft && isNodeLeft) {
+      return case2('rightChild', 'leftChild');
     }
-    if (isLeftChild(grandparent, parent)) {
-      return this.case3('leftChild', 'rightChild', grandparent, parent);
+    const case3 = this.case3.bind(this, grandparent, parent);
+    if (isParentLeft) {
+      return case3('leftChild', 'rightChild');
     }
-    return this.case3('rightChild', 'leftChild', grandparent, parent);
+    return case3('rightChild', 'leftChild');
   }
   case1(grandparent, parent, uncle) {
     grandparent.color = RED;
@@ -108,7 +108,7 @@ class RedBlackTree {
     uncle.color = BLACK;
     return this.balanceTree(grandparent);
   }
-  case2(child1Name, child2Name, grandparent, parent, node) {
+  case2(grandparent, parent, node, child1Name, child2Name) {
     grandparent[child1Name] = node;
     node.parent = grandparent;
     parent[child2Name] = node[child1Name];
@@ -119,12 +119,17 @@ class RedBlackTree {
     node.subtreeSize = node.leftChild.subtreeSize + node.rightChild.subtreeSize + 1;
     return this.balanceTree(grandparent[child1Name][child1Name]);
   }
-  case3(child1Name, child2Name, grandparent, parent) {
+  case3(grandparent, parent, child1Name, child2Name) {
     parent.parent = grandparent.parent;
     if (parent.parent) {
-      if (isLeftChild(parent.parent, parent)) parent.parent.leftChild = parent;
-      else parent.parent.rightChild = parent;
-    } else {
+      if (isLeftChild(parent.parent, parent)) {
+        parent.parent.leftChild = parent;
+      }
+      else {
+        parent.parent.rightChild = parent;
+      }
+    }
+    else {
       this.root = parent;
     }
     grandparent[child1Name] = parent[child2Name];
@@ -141,9 +146,10 @@ class RedBlackTree {
   traverse(currentNode, results) {
     if (!currentNode) {
       currentNode = this.root;
-      isRoot = true;
     }
-    if (!results) results = [];
+    if (!results) {
+      results = [];
+    }
     if (currentNode.leftChild.key !== null) {
       this.traverse(currentNode.leftChild, results);
     }
@@ -154,12 +160,15 @@ class RedBlackTree {
     return results;
   }
   maxHeight(node) {
-    if (!node) node = this.root;
+    if (!node) {
+      node = this.root;
+    }
     let leftHeight = 0;
     let rightHeight = 0;
     if (node.leftChild.key !== null) {
       leftHeight = this.maxHeight(node.leftChild) || 0;
-    } if (node.rightChild.key !== null) {
+    }
+    if (node.rightChild.key !== null) {
       rightHeight = this.maxHeight(node.rightChild) || 0;
     }
     return 1 + (leftHeight > rightHeight ? leftHeight : rightHeight);
@@ -168,10 +177,18 @@ class RedBlackTree {
     // only count left if we are coming from right. 
     let currentNode = this.root;
     while (true) {
-      if (currentNode.key === number) break;
-      if (currentNode.key === null) return -1;
-      if (number < currentNode.key) currentNode = currentNode.leftChild;
-      else currentNode = currentNode.rightChild;
+      if (currentNode.key === number) {
+        break;
+      }
+      if (currentNode.key === null) {
+        return -1;
+      }
+      if (number < currentNode.key) {
+        currentNode = currentNode.leftChild;
+      }
+      else {
+        currentNode = currentNode.rightChild;
+      }
     }
     let countLeft = true;
     let rank = 0;
