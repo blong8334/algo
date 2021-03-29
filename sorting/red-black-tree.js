@@ -8,11 +8,15 @@ const isNodeRoot = (node) => {
 };
 const getAncestor = (node, levels) => {
   let ancestor = node;
-  while (levels--) ancestor = ancestor.parent;
+  while (levels--) {
+    ancestor = ancestor.parent;
+  }
   return ancestor;
 };
 const getUncle = (grandparent, parent) => {
-  if (isLeftChild(grandparent, parent)) return grandparent.rightChild;
+  if (isLeftChild(grandparent, parent)) {
+    return grandparent.rightChild;
+  }
   return grandparent.leftChild;
 };
 
